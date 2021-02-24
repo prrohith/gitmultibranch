@@ -1,0 +1,14 @@
+node{
+    stage('git'){
+        git 'https://github.com/wakaleo/game-of-life.git'
+    }
+    stage('maven'){
+        sh 'mvn clean package'
+    }
+    stage('tests'){
+        junit 'gameoflife-web/target/surefire-reports/*.xml'
+    }
+    stage('artifacts'){
+        archive 'gameoflife-web/targets/gameoflife.war'
+    }
+}
