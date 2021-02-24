@@ -4,7 +4,7 @@ pipeline{
         cron('H * * * 1-5')
     }
     parameters{
-        string(name:'MavenGoal',defaultVaule:'clean package',description:'Enter your maven goal')
+        string(name:'MavenGoal',defaultValue:'clean package',description:'Enter your maven goal')
     }
     options{
         timeout(unit: 'MINUTES', time:30)
@@ -18,7 +18,10 @@ pipeline{
         }
         stage('build'){
             steps{
-                sh script: 'mvn clean package'
+                withSonarQubeEnv('SONAR-7.1'){
+                    sh script: 'mvn ${MavenGoal}'
+                }
+                
             }
         }
         stage('post build'){
@@ -28,8 +31,14 @@ pipeline{
                 stash name:'warfile', includes: 'gameoflife-web/target/*.war'
             }
         }
+        stage('Qualitygate'){
+            steps{
+                timeout(time:1, unit:'HOURS')
+                waitForQualityGate abortPipeline: true, credentials: 'SONAR_TOKEN'
+            }
+        }
         stage('copy war file to node'){
-            agent{label ''}
+            agent{label 'Master'}
             steps{
                 unstash name:'warfile'
             }
