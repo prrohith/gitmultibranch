@@ -21,13 +21,6 @@ pipeline{
                 
             }
         }
-        stage('post build'){
-            steps{
-                junit 'gameoflife-web/target/surefire-reports/*.xml'
-                archiveArtifacts 'gameoflife-web/target/*.war'
-                stash name:'warfile', includes: 'gameoflife-web/target/*.war'
-            }
-        }
         stage('Qualitygate'){
             steps{
                 timeout(time:1, unit:'HOURS'){
@@ -36,6 +29,14 @@ pipeline{
                 
             }
         }
+        stage('post build'){
+            steps{
+                junit 'gameoflife-web/target/surefire-reports/*.xml'
+                archiveArtifacts 'gameoflife-web/target/*.war'
+                stash name:'warfile', includes: 'gameoflife-web/target/*.war'
+            }
+        }
+        
         stage('copy war file to node'){
             agent{label 'ltecomm'}
             steps{
