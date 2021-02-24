@@ -1,7 +1,7 @@
 pipeline{
     agent{label 'Master'}
     parameters{
-        string(name:'MavenGoal',defaultVaule:'clean package',description:'Enter your maven goal')
+        string(name:'MavenGoal',defaultValue:'clean package',description:'Enter your maven goal')
     }
     options{
         timeout(unit: 'MINUTES', time:30)
@@ -10,12 +10,12 @@ pipeline{
     stages{
         stage('scm'){
             steps{
-                git 'https://github.com/wakaleo/game-of-life.git' 
+                git branch:'release', url: 'https://github.com/wakaleo/game-of-life.git' 
             }
         }
         stage('build'){
             steps{
-                sh script: 'mvn clean package'
+                sh script: 'mvn ${MavenGoal}'
             }
         }
         stage('post build'){
