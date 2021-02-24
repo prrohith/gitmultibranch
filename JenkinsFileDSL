@@ -29,7 +29,7 @@ pipeline{
             }
         }
         stage('copy war file to node'){
-            agent{label ''}
+            agent{label 'Master'}
             steps{
                 unstash name:'warfile'
             }
