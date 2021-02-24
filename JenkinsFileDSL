@@ -4,7 +4,7 @@ pipeline{
         cron('59 23 * * *')
     }
     parameters{
-        string(name:'MavenGoal',defaultVaule:'clean package',description:'Enter your maven goal')
+        string(name:'MavenGoal',defaultValue:'clean package',description:'Enter your maven goal')
     }
     options{
         timeout(unit: 'MINUTES', time:30)
@@ -18,7 +18,10 @@ pipeline{
         }
         stage('build'){
             steps{
-                sh script: 'mvn ${MavenGoal}'
+                withSonarQubeEnv('SONAR-7.1'){
+                    sh script: 'mvn ${MavenGoal}'
+                }
+                
             }
         }
         stage('post build'){
@@ -26,6 +29,12 @@ pipeline{
                 junit 'gameoflife-web/target/surefire-reports/*.xml'
                 archiveArtifacts 'gameoflife-web/target/*.war'
                 stash name:'warfile', includes: 'gameoflife-web/target/*.war'
+            }
+        }
+        stage('Qualitygate'){
+            steps{
+                timeout(time:1, unit:'HOURS')
+                waitForQualityGate abortPipeline: true, credentials: 'SONAR_TOKEN'
             }
         }
         stage('copy war file to node'){
