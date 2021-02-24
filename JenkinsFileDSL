@@ -33,8 +33,10 @@ pipeline{
         }
         stage('Qualitygate'){
             steps{
-                timeout(time:1, unit:'HOURS')
-                waitForQualityGate abortPipeline: true, credentialsId: 'SONAR_TOKEN'
+                timeout(time:1, unit:'HOURS'){
+                    waitForQualityGate abortPipeline: true, credentialsId: 'SONAR_TOKEN'
+                }
+                
             }
         }
         stage('copy war file to node'){
