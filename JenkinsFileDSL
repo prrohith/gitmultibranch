@@ -1,8 +1,5 @@
 pipeline{
-    agent{label 'ltecomm'}
-    triggers{
-        cron('H * * * 1-5')
-    }
+    agent{label 'Master'}
     parameters{
         string(name:'MavenGoal',defaultVaule:'clean package',description:'Enter your maven goal')
     }
@@ -29,7 +26,7 @@ pipeline{
             }
         }
         stage('copy war file to node'){
-            agent{label ''}
+            agent{label 'ltecomm'}
             steps{
                 unstash name:'warfile'
             }
