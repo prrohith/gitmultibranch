@@ -1,7 +1,7 @@
 pipeline{
     agent{label 'ltecomm'}
     triggers{
-        cron('H * * * 1-5')
+        cron('59 23 * * *')
     }
     parameters{
         string(name:'MavenGoal',defaultVaule:'clean package',description:'Enter your maven goal')
